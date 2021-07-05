@@ -1,5 +1,10 @@
 <script>
-	let colors = [
+	import Canvas from './components/Canvas.svelte';
+	import CopyArea from './components/CopyArea.svelte';
+	import Picker from './components/Picker.svelte';
+	import { color } from './stores'
+
+	const colors = [
 		{
 			"color": "",
 			"code": "",
@@ -86,8 +91,9 @@
 			"name": "White"
 		}
 	];
-	let block = "█";
-	let placeholder = "▓"
+	const block = "█";
+	const placeholder = "▓"
+	
 	let grid = [
 		[colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0]],
 		[colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0]],
@@ -104,80 +110,27 @@
 		[colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0]],
 		[colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0], colors[0]],
 	];
-	let color = colors[0];
+
+	color.set(colors[0]);
 </script>
 
 <main>
-		<div class="canvas center">
-		{#each grid as row}
-			{#each row as item}
-				<span style="color: {item.color};" title="{item.name}"
-				on:click="{() => item = color}" class="pointer">
-					{#if item.name != "Empty"}
-						{block}
-					{:else}
-						{placeholder}
-					{/if}
-				</span>
-			{/each}
-			<br/>
-		{/each}
-		</div>
+	<div class="center">
+		<Canvas block={block} placeholder={placeholder} bind:grid={grid} />
+	</div>
 
-		<div class="center color-picker">
-			{#each colors as item}
-				<span style="color: {item.color};" title="{item.name}"
-				on:click="{() => color = item}" class="pointer">
-					{#if item.name != "Empty"}
-						{block}
-					{:else}
-						{placeholder}
-					{/if}
-				</span>
-			{/each}
-		</div>
+	<div class="center">
+		<Picker block={block} placeholder={placeholder} colors={colors} />
+	</div>
 
-		<div class="center copy">
-		{#each grid as row, i}
-			{#each row as item, j}
-				{#if item.name != "Empty"}
-				<!-- Cannot have whitespace here -->
-					{#if j == 0}{item.code}{:else if grid[i][j - 1] != grid[i][j]}{item.code}{/if}{block}
-				{:else}
-					{placeholder}
-				{/if}
-			{/each}
-			<br/>
-		{/each}
-		</div>
+	<div class="center">
+		<CopyArea block={block} placeholder={placeholder} bind:grid={grid} />
+	</div>
 </main>
 
 <style>
 	.center {
 		margin: 0 auto;
 		width: fit-content;
-	}
-
-	.color-picker {
-		padding: 10px;
-		margin-top: 10px;
-		margin-bottom: 10px;
-		background-color: rgb(233, 233, 233);
-	}
-
-	.pointer {
-		cursor: pointer;
-	}
-
-	.copy {
-		background-color: rgb(189, 189, 189);
-		padding: 30px;
-		width: 36rem;
-		text-align: center;
-	}
-
-	.canvas {
-		background-color: rgb(196, 182, 163);
-		padding: 30px;
 	}
 </style>
